@@ -30,11 +30,12 @@
         .top-navbar {
             display: flex; justify-content: space-between; align-items: center;
             height: 70px; background-color: #FFFFFF; border-bottom: 1px solid var(--border-color);
-            padding: 0 24px; flex-shrink: 0; z-index: 10;
+            padding-top: 0; padding-bottom: 0; padding-right: 24px; padding-left: 8px; /* Pushed further left */
+            flex-shrink: 0; z-index: 10;
             box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
         .logo-area { display: flex; align-items: center; width: 320px; }
-        .logo-area img { max-height: 100px; width: auto; }
+        .logo-area img { max-height: 55px; width: auto; margin-left: 8px; } /* Larger logo size */
         
         .progress-container { flex-grow: 1; margin: 0 40px; max-width: 400px; }
         .progress-text { font-size: 14px; font-weight: 700; color: var(--success-green); margin-bottom: 8px; display: block; }
@@ -130,7 +131,7 @@
         .feedback.success { background-color: rgba(32, 201, 151, 0.1); color: var(--success-green); border: 1px solid var(--success-green); display: block; }
         .feedback.error { background-color: rgba(220, 53, 69, 0.1); color: var(--alert-red); border: 1px solid var(--alert-red); display: block; }
 
-        /* Dashboard Specific Styles */
+        /* --- Dashboard Specific Styles --- */
         .dash-header { background: linear-gradient(135deg, var(--brand-blue), #007bb5); color: white; padding: 40px; border-radius: 12px; margin-bottom: 32px; box-shadow: 0 4px 15px rgba(0, 174, 239, 0.2); }
         .dash-header h1 { font-size: 32px; margin-bottom: 8px; }
         .dash-header p { font-size: 16px; opacity: 0.9; }
@@ -142,7 +143,7 @@
         .module-card p { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; flex-grow: 1; }
         .module-card .card-action { color: var(--brand-blue); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 4px; }
 
-        /* Badges Section */
+        /* --- Badges Section --- */
         .badges-section { background-color: var(--bg-light); border-radius: 12px; padding: 32px; border: 1px solid var(--border-color); }
         .badges-section h2 { font-size: 20px; margin-bottom: 24px; color: var(--text-dark); }
         .badge-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; text-align: center; }
@@ -177,7 +178,7 @@
         
         <aside class="sidebar">
             <div class="sidebar-header" onclick="loadLesson('mod_dashboard', null)">
-                <span>AI-gnition</span>
+                <span>Month 0: Ignition</span>
                 <span style="font-size: 12px; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 12px;">Dashboard</span>
             </div>
             
@@ -221,11 +222,12 @@
     </div>
 
     <script>
+        // --- COMPLETE LESSON DICTIONARY ---
         const lessonContent = {
             // --- DASHBOARD ---
             'mod_dashboard': `
                 <div class="dash-header">
-                    <h1>Welcome!</h1>
+                    <h1>Welcome to Project Jarvis</h1>
                     <p>Track your progress as you transition from passive searching to active reasoning.</p>
                 </div>
 
@@ -653,10 +655,13 @@
             `
         };
 
-        window.onload = () => { loadLesson('mod_dashboard', null); updateProgress(); }
+        // --- SCRIPTS & LOGIC ---
+        window.onload = () => { 
+            loadProgress(); 
+            loadLesson('mod_dashboard', null); 
+        }
 
         function loadLesson(lessonId, element) {
-            // Re-trigger the slide-up animation by temporarily removing and re-adding the content wrapper
             const container = document.getElementById('content-display');
             container.style.animation = 'none';
             container.offsetHeight; /* trigger reflow */
@@ -665,34 +670,68 @@
             document.querySelectorAll('.lesson-item').forEach(el => el.classList.remove('active'));
             if(element) element.classList.add('active');
             
-            container.innerHTML = lessonContent[lessonId];
+            if(lessonContent[lessonId]) {
+                container.innerHTML = lessonContent[lessonId];
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' }); 
 
-            // Check badge statuses when dashboard loads
-            if (lessonId === 'mod_dashboard') {
-                if(document.getElementById('mod1-quiz-nav').classList.contains('completed')) {
-                    document.getElementById('badge-1').classList.add('unlocked');
-                }
-                if(document.getElementById('mod2-quiz-nav').classList.contains('completed')) {
-                    document.getElementById('badge-2').classList.add('unlocked');
-                }
-                if(document.getElementById('mod3-quiz-nav').classList.contains('completed')) {
-                    document.getElementById('badge-3').classList.add('unlocked');
-                }
-                if(document.getElementById('mod4-quiz-nav').classList.contains('completed')) {
-                    document.getElementById('badge-4').classList.add('unlocked');
-                }
-            }
+            checkBadges();
         }
 
         function markComplete(btnElement) {
             const activeItem = document.querySelector('.lesson-item.active');
-            if (activeItem) activeItem.classList.add('completed');
-            btnElement.innerText = "Completed ✓";
-            btnElement.style.backgroundColor = "var(--success-green)";
+            if (activeItem) {
+                activeItem.classList.add('completed');
+                saveProgress();
+            }
+            if(btnElement) {
+                btnElement.innerText = "Completed ✓";
+                btnElement.style.backgroundColor = "var(--success-green)";
+            }
             updateProgress();
+            checkBadges();
         }
 
+        // --- Local Storage Database ---
+        function saveProgress() {
+            const completedIds = [];
+            document.querySelectorAll('.lesson-item.completed').forEach(item => {
+                const match = item.getAttribute('onclick').match(/'([^']+)'/);
+                if (match) completedIds.push(match[1]);
+            });
+            localStorage.setItem('jarvis_lms_progress', JSON.stringify(completedIds));
+        }
+
+        function loadProgress() {
+            const savedData = localStorage.getItem('jarvis_lms_progress');
+            if (savedData) {
+                const completedIds = JSON.parse(savedData);
+                document.querySelectorAll('.lesson-item').forEach(item => {
+                    const match = item.getAttribute('onclick').match(/'([^']+)'/);
+                    if (match && completedIds.includes(match[1])) {
+                        item.classList.add('completed');
+                    }
+                });
+                updateProgress();
+            }
+        }
+
+        function checkBadges() {
+            if(document.getElementById('mod1-quiz-nav') && document.getElementById('mod1-quiz-nav').classList.contains('completed')) {
+                document.getElementById('badge-1')?.classList.add('unlocked');
+            }
+            if(document.getElementById('mod2-quiz-nav') && document.getElementById('mod2-quiz-nav').classList.contains('completed')) {
+                document.getElementById('badge-2')?.classList.add('unlocked');
+            }
+            if(document.getElementById('mod3-quiz-nav') && document.getElementById('mod3-quiz-nav').classList.contains('completed')) {
+                document.getElementById('badge-3')?.classList.add('unlocked');
+            }
+            if(document.getElementById('mod4-quiz-nav') && document.getElementById('mod4-quiz-nav').classList.contains('completed')) {
+                document.getElementById('badge-4')?.classList.add('unlocked');
+            }
+        }
+
+        // --- Activity & Quizzes ---
         function submitTextActivity(btnElement, inputId) {
             const inputVal = document.getElementById(inputId).value;
             if (inputVal.trim().length > 5) {
@@ -704,13 +743,8 @@
 
         function submitMod1Quiz() {
             const feedback = document.getElementById('quiz-feedback-1');
-            let score = 0;
-            let answered = 0;
-
-            const answers = {
-                q1: 'b', q2: 'c', q3: 'b', q4: 'b', q5: 'b',
-                q6: 'b', q7: 'c', q8: 'b', q9: 'b', q10: 'a'
-            };
+            let score = 0; let answered = 0;
+            const answers = { q1: 'b', q2: 'c', q3: 'b', q4: 'b', q5: 'b', q6: 'b', q7: 'c', q8: 'b', q9: 'b', q10: 'a' };
 
             for (let i = 1; i <= 10; i++) {
                 const selected = document.querySelector('input[name="m1q' + i + '"]:checked');
@@ -721,19 +755,17 @@
             }
 
             if (answered < 10) {
-                feedback.className = 'feedback error';
-                feedback.innerText = "Please answer all 10 questions before submitting.";
-                return;
+                feedback.className = 'feedback error'; feedback.innerText = "Please answer all 10 questions before submitting."; return;
             }
 
             if (score >= 9) {
-                feedback.className = 'feedback success';
-                feedback.innerText = "Congratulations! You passed with a score of " + score + "/10. Badge Unlocked.";
+                feedback.className = 'feedback success'; feedback.innerText = "Congratulations! You passed with a score of " + score + "/10. Badge Unlocked.";
                 document.querySelector('.lesson-item.active').classList.add('completed');
+                saveProgress();
                 updateProgress();
+                checkBadges();
             } else {
-                feedback.className = 'feedback error';
-                feedback.innerText = "You scored " + score + "/10. You need a 9/10 to pass. Review the module and try again.";
+                feedback.className = 'feedback error'; feedback.innerText = "You scored " + score + "/10. You need a 9/10 to pass. Review the module and try again.";
             }
         }
 
@@ -743,9 +775,7 @@
             const feedback = document.getElementById('quiz-feedback-2');
 
             if (!q1 || !q2) {
-                feedback.className = 'feedback error';
-                feedback.innerText = "Please answer all questions.";
-                return;
+                feedback.className = 'feedback error'; feedback.innerText = "Please answer all questions."; return;
             }
 
             let score = 0;
@@ -753,13 +783,13 @@
             if (q2.value === 'false') score++;
 
             if (score === 2) {
-                feedback.className = 'feedback success';
-                feedback.innerText = "Perfect Score! Badge Unlocked.";
+                feedback.className = 'feedback success'; feedback.innerText = "Perfect Score! Badge Unlocked.";
                 document.querySelector('.lesson-item.active').classList.add('completed');
+                saveProgress();
                 updateProgress();
+                checkBadges();
             } else {
-                feedback.className = 'feedback error';
-                feedback.innerText = "You scored " + score + " out of 2. Please review the material.";
+                feedback.className = 'feedback error'; feedback.innerText = "You scored " + score + " out of 2. Please review the material.";
             }
         }
 
@@ -775,25 +805,20 @@
             if (q2.value === 'b') score++;
 
             if (score === 2) {
-                feedback.className = 'feedback success';
-                feedback.innerText = "Perfect Score! Badge Unlocked.";
+                feedback.className = 'feedback success'; feedback.innerText = "Perfect Score! Badge Unlocked.";
                 document.querySelector('.lesson-item.active').classList.add('completed');
+                saveProgress();
                 updateProgress();
+                checkBadges();
             } else {
-                feedback.className = 'feedback error';
-                feedback.innerText = "You scored " + score + " out of 2. Try again.";
+                feedback.className = 'feedback error'; feedback.innerText = "You scored " + score + " out of 2. Try again.";
             }
         }
 
         function submitFinalExam() {
             const feedback = document.getElementById('quiz-feedback-final');
-            let score = 0;
-            let answered = 0;
-
-            const answers = {
-                f1: 'perplexity', f2: 'b', f3: 'a', f4: 'b', f5: 'constraints',
-                f6: 'a', f7: 'a', f8: 'false', f9: 'a', f10: 'a'
-            };
+            let score = 0; let answered = 0;
+            const answers = { f1: 'perplexity', f2: 'b', f3: 'a', f4: 'b', f5: 'constraints', f6: 'a', f7: 'a', f8: 'false', f9: 'a', f10: 'a' };
 
             for (let i = 1; i <= 10; i++) {
                 const selected = document.querySelector('input[name="f' + i + '"]:checked');
@@ -804,26 +829,24 @@
             }
 
             if (answered < 10) {
-                feedback.className = 'feedback error';
-                feedback.innerText = "Please answer all 10 questions before submitting.";
-                return;
+                feedback.className = 'feedback error'; feedback.innerText = "Please answer all 10 questions before submitting."; return;
             }
 
             if (score >= 9) {
-                feedback.className = 'feedback success';
-                feedback.innerText = "Congratulations! You passed with a score of " + score + "/10. You have earned your Pilot's License!";
+                feedback.className = 'feedback success'; feedback.innerText = "Congratulations! You passed with a score of " + score + "/10. You have earned your Pilot's License!";
                 document.querySelector('.lesson-item.active').classList.add('completed');
+                saveProgress();
                 updateProgress();
+                checkBadges();
             } else {
-                feedback.className = 'feedback error';
-                feedback.innerText = "You scored " + score + "/10. You need a 9/10 to pass. Review the modules and try again.";
+                feedback.className = 'feedback error'; feedback.innerText = "You scored " + score + "/10. You need a 9/10 to pass. Review the modules and try again.";
             }
         }
 
         function updateProgress() {
             const total = document.querySelectorAll('.lesson-item').length;
             const completed = document.querySelectorAll('.lesson-item.completed').length;
-            const percentage = Math.round((completed / total) * 100);
+            const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
             document.getElementById('progress-bar').style.width = percentage + '%';
             document.getElementById('progress-text').innerText = percentage + '% COMPLETE';
         }
