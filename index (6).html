@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Month 0: The AI Ignition Program</title>
+    <style>
+        :root {
+            --brand-blue: #00AEEF;
+            --brand-blue-hover: #0095CC;
+            --sidebar-bg: #FFFFFF;
+            --bg-light: #F8F9FA;
+            --text-dark: #333333;
+            --text-muted: #6C757D;
+            --border-color: #E9ECEF;
+            --success-green: #20C997;
+            --alert-red: #DC3545;
+            --warning-yellow: #FFC107;
+            --locked-gray: #E0E0E0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+        body {
+            background-color: var(--bg-light); color: var(--text-dark);
+            display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+        }
+
+        /* --- Top Navigation --- */
+        .top-navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            height: 70px; background-color: #FFFFFF; border-bottom: 1px solid var(--border-color);
+            padding: 0 24px; flex-shrink: 0; z-index: 10;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .logo-area { display: flex; align-items: center; width: 320px; }
+        .logo-area img { max-height: 100px; width: auto; }
+        
+        .progress-container { flex-grow: 1; margin: 0 40px; max-width: 400px; }
+        .progress-text { font-size: 14px; font-weight: 700; color: var(--success-green); margin-bottom: 8px; display: block; }
+        .progress-bar-bg { height: 6px; background-color: var(--border-color); border-radius: 4px; width: 100%; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background-color: var(--success-green); width: 0%; transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+
+        .user-profile { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text-muted); cursor: pointer; transition: color 0.2s ease;}
+        .user-profile:hover { color: var(--brand-blue); }
+        .avatar { width: 36px; height: 36px; background-color: var(--border-color); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; transition: transform 0.3s ease; }
+        .user-profile:hover .avatar { transform: scale(1.05); background-color: var(--brand-blue); }
+
+        /* --- Layout & Sidebar --- */
+        .main-container { display: flex; flex-grow: 1; overflow: hidden; }
+
+        .sidebar { width: 320px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
+        .sidebar-header { background-color: var(--brand-blue); color: white; padding: 16px 20px; font-weight: 600; font-size: 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 5; cursor: pointer; transition: background 0.2s;}
+        .sidebar-header:hover { background-color: var(--brand-blue-hover); }
+        
+        .module-divider { background-color: var(--bg-light); padding: 12px 20px; font-size: 12px; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border-color); border-top: 1px solid var(--border-color); text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 54px; z-index: 4;}
+        
+        .lesson-list { list-style: none; }
+        .lesson-item { 
+            display: flex; align-items: flex-start; padding: 16px 20px; 
+            border-bottom: 1px solid var(--border-color); cursor: pointer; 
+            border-left: 4px solid transparent;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+        }
+        .lesson-item:hover { background-color: var(--bg-light); padding-left: 26px; }
+        .lesson-item.active { background-color: rgba(0, 174, 239, 0.05); border-left: 4px solid var(--brand-blue); padding-left: 26px; }
+        .lesson-item.active .lesson-title { color: var(--brand-blue); font-weight: 600; }
+        
+        .lesson-icon { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border-color); margin-right: 12px; margin-top: 2px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; transition: all 0.3s ease;}
+        .lesson-item.completed .lesson-icon { background-color: var(--success-green); border-color: var(--success-green); color: white; }
+        
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .lesson-item.completed .lesson-icon::after { content: '✓'; font-size: 12px; font-weight: bold; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .lesson-title { font-size: 14px; line-height: 1.4; transition: color 0.2s ease; }
+
+        /* --- Main Content Area --- */
+        .content-area { flex-grow: 1; padding: 40px; overflow-y: auto; background-color: white; display: flex; flex-direction: column; align-items: center; scroll-behavior: smooth; }
+        
+        @keyframes fadeInSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .dynamic-content-wrapper { width: 100%; max-width: 800px; animation: fadeInSlideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); padding-bottom: 60px; }
+        
+        .content-title { font-size: 28px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; letter-spacing: -0.5px; }
+        .content-subtitle { font-size: 16px; color: var(--text-muted); margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        
+        .text-block { font-size: 16px; line-height: 1.6; color: var(--text-dark); margin-bottom: 24px; }
+        .text-block b { color: var(--brand-blue); }
+        .highlight-box { background-color: rgba(255, 193, 7, 0.1); border-left: 4px solid var(--warning-yellow); padding: 16px; margin-bottom: 24px; border-radius: 0 8px 8px 0; }
+        
+        .action-box { background-color: var(--bg-light); border: 1px solid var(--border-color); border-radius: 8px; padding: 24px; margin-bottom: 24px; transition: box-shadow 0.3s ease; }
+        .action-box:hover { box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .action-box h3 { font-size: 18px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--brand-blue); }
+        
+        /* --- Interactive Elements --- */
+        .btn { 
+            display: inline-block; background-color: var(--brand-blue); color: white; padding: 12px 24px; 
+            border-radius: 6px; text-decoration: none; font-weight: 600; cursor: pointer; border: none; 
+            font-size: 14px; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
+        }
+        .btn:hover { background-color: var(--brand-blue-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0, 174, 239, 0.3); }
+        .btn:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(0, 174, 239, 0.3); }
+        
+        .input-group { margin-bottom: 16px; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
+        .input-group input[type="text"], .input-group input[type="file"], .input-group textarea { 
+            width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; 
+            font-size: 14px; transition: border-color 0.3s ease, box-shadow 0.3s ease; 
+        }
+        .input-group input[type="text"]:focus, .input-group textarea:focus {
+            outline: none; border-color: var(--brand-blue); box-shadow: 0 0 0 3px rgba(0, 174, 239, 0.1);
+        }
+        .input-group textarea { resize: vertical; min-height: 100px; }
+        
+        .quiz-option { 
+            display: block; padding: 14px 16px; border: 1px solid var(--border-color); 
+            border-radius: 6px; margin-bottom: 12px; cursor: pointer; background: white; 
+            font-size: 15px; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform-origin: left center;
+        }
+        .quiz-option:hover { background-color: #f0f8ff; border-color: var(--brand-blue); transform: scale(1.01) translateX(4px); box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .quiz-option input { margin-right: 12px; cursor: pointer; transform: scale(1.1); }
+        
+        .feedback { margin-top: 16px; padding: 12px; border-radius: 6px; display: none; font-weight: 600; font-size: 14px; animation: fadeInSlideUp 0.3s ease forwards; }
+        .feedback.success { background-color: rgba(32, 201, 151, 0.1); color: var(--success-green); border: 1px solid var(--success-green); display: block; }
+        .feedback.error { background-color: rgba(220, 53, 69, 0.1); color: var(--alert-red); border: 1px solid var(--alert-red); display: block; }
+
+        /* Dashboard Specific Styles */
+        .dash-header { background: linear-gradient(135deg, var(--brand-blue), #007bb5); color: white; padding: 40px; border-radius: 12px; margin-bottom: 32px; box-shadow: 0 4px 15px rgba(0, 174, 239, 0.2); }
+        .dash-header h1 { font-size: 32px; margin-bottom: 8px; }
+        .dash-header p { font-size: 16px; opacity: 0.9; }
+
+        .dash-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 40px; }
+        .module-card { background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; display: flex; flex-direction: column; }
+        .module-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: var(--brand-blue); }
+        .module-card h3 { font-size: 18px; margin-bottom: 8px; color: var(--text-dark); }
+        .module-card p { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; flex-grow: 1; }
+        .module-card .card-action { color: var(--brand-blue); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 4px; }
+
+        /* Badges Section */
+        .badges-section { background-color: var(--bg-light); border-radius: 12px; padding: 32px; border: 1px solid var(--border-color); }
+        .badges-section h2 { font-size: 20px; margin-bottom: 24px; color: var(--text-dark); }
+        .badge-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; text-align: center; }
+        
+        .badge-item { display: flex; flex-direction: column; align-items: center; }
+        .badge-circle { width: 80px; height: 80px; border-radius: 50%; background-color: var(--locked-gray); display: flex; justify-content: center; align-items: center; font-size: 32px; margin-bottom: 12px; transition: all 0.4s ease; filter: grayscale(100%); opacity: 0.5; border: 4px solid transparent; }
+        .badge-title { font-size: 14px; font-weight: 600; color: var(--text-muted); }
+        .badge-desc { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+        /* Unlocked Badge State */
+        .badge-item.unlocked .badge-circle { background-color: white; filter: grayscale(0%); opacity: 1; border-color: var(--brand-blue); box-shadow: 0 0 20px rgba(0, 174, 239, 0.4); transform: scale(1.05); }
+        .badge-item.unlocked .badge-title { color: var(--brand-blue); }
+    </style>
+</head>
+<body>
+
+    <header class="top-navbar">
+        <div class="logo-area">
+            <img src="https://drive.google.com/thumbnail?id=1yRUenLC34o3TVUxfgC0aWrrprqLKsYH7&sz=w500" alt="IIDE Logo">
+        </div>
+        <div class="progress-container">
+            <span class="progress-text" id="progress-text">0% COMPLETE</span>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar"></div></div>
+        </div>
+        <div class="user-profile" onclick="loadLesson('mod_dashboard', null)">
+            Dashboard
+            <div class="avatar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        
+        <aside class="sidebar">
+            <div class="sidebar-header" onclick="loadLesson('mod_dashboard', null)">
+                <span>AI-gnition</span>
+                <span style="font-size: 12px; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 12px;">Dashboard</span>
+            </div>
+            
+            <div class="module-divider" style="top: 52px;">Module 1: The Launchpad</div>
+            <ul class="lesson-list">
+                <li class="lesson-item" onclick="loadLesson('mod1_1', this)"><div class="lesson-icon"></div><div class="lesson-title">1.1 Timeline of Intelligence</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod1_2', this)"><div class="lesson-icon"></div><div class="lesson-title">1.2 How AI "Thinks"</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod1_3', this)"><div class="lesson-icon"></div><div class="lesson-title">1.3 Engine of the LLM</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod1_4', this)"><div class="lesson-icon"></div><div class="lesson-title">1.4 Technical Setup</div></li>
+                <li class="lesson-item" id="mod1-quiz-nav" onclick="loadLesson('mod1_quiz', this)"><div class="lesson-icon"></div><div class="lesson-title">Module 1 Checkpoint</div></li>
+            </ul>
+
+            <div class="module-divider">Module 2: The AI Mindset</div>
+            <ul class="lesson-list">
+                <li class="lesson-item" onclick="loadLesson('mod2_1', this)"><div class="lesson-icon"></div><div class="lesson-title">2.1 LLMs are not Google</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod2_2', this)"><div class="lesson-icon"></div><div class="lesson-title">2.2 Ethics of Augmentation</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod2_3', this)"><div class="lesson-icon"></div><div class="lesson-title">2.3 Perplexity vs. ChatGPT</div></li>
+                <li class="lesson-item" id="mod2-quiz-nav" onclick="loadLesson('mod2_quiz', this)"><div class="lesson-icon"></div><div class="lesson-title">Module 2 Checkpoint</div></li>
+            </ul>
+
+            <div class="module-divider">Module 3: Prompting Sandbox</div>
+            <ul class="lesson-list">
+                <li class="lesson-item" onclick="loadLesson('mod3_1', this)"><div class="lesson-icon"></div><div class="lesson-title">3.1 The RICCE Method</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod3_2', this)"><div class="lesson-icon"></div><div class="lesson-title">3.2 Chain of Thought (CoT)</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod3_3', this)"><div class="lesson-icon"></div><div class="lesson-title">3.3 Iterative Design</div></li>
+                <li class="lesson-item" id="mod3-quiz-nav" onclick="loadLesson('mod3_quiz', this)"><div class="lesson-icon"></div><div class="lesson-title">Module 3 Checkpoint</div></li>
+            </ul>
+
+            <div class="module-divider">Module 4: Pre-Flight Project</div>
+            <ul class="lesson-list">
+                <li class="lesson-item" onclick="loadLesson('mod4_1', this)"><div class="lesson-icon"></div><div class="lesson-title">4.1 The "Small Win" Bot</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod4_2', this)"><div class="lesson-icon"></div><div class="lesson-title">4.2 The ROI Calculator</div></li>
+                <li class="lesson-item" id="mod4-quiz-nav" onclick="loadLesson('mod4_3', this)"><div class="lesson-icon"></div><div class="lesson-title">4.3 Final Readiness Check</div></li>
+            </ul>
+        </aside>
+
+        <main class="content-area">
+            <div class="dynamic-content-wrapper" id="content-display">
+                </div>
+        </main>
+    </div>
+
+    <script>
+        const lessonContent = {
+            // --- DASHBOARD ---
+            'mod_dashboard': `
+                <div class="dash-header">
+                    <h1>Welcome!</h1>
+                    <p>Track your progress as you transition from passive searching to active reasoning.</p>
+                </div>
+
+                <div class="dash-grid">
+                    <div class="module-card" onclick="document.querySelectorAll('.lesson-item')[0].click();">
+                        <h3>Module 1: The Launchpad</h3>
+                        <p>De-mystify AI history, understand the LLM engine, and set up your technical cockpit before prompting.</p>
+                        <div class="card-action">Continue Module 1 &rarr;</div>
+                    </div>
+                    <div class="module-card" onclick="document.querySelectorAll('.lesson-item')[5].click();">
+                        <h3>Module 2: The AI Mindset</h3>
+                        <p>Stop treating AI as a search engine. Learn predictive logic, task decomposition, and the Human-in-the-Loop framework.</p>
+                        <div class="card-action">Continue Module 2 &rarr;</div>
+                    </div>
+                    <div class="module-card" onclick="document.querySelectorAll('.lesson-item')[9].click();">
+                        <h3>Module 3: Prompting Sandbox</h3>
+                        <p>Master the Grammar of commanding AI. Learn the RICCE Method, Chain of Thought, and iterative prompt design.</p>
+                        <div class="card-action">Continue Module 3 &rarr;</div>
+                    </div>
+                    <div class="module-card" onclick="document.querySelectorAll('.lesson-item')[13].click();">
+                        <h3>Module 4: Pre-Flight</h3>
+                        <p>Build your first automated Agent, calculate your ROI benchmark, and pass the final Pilot's License Exam.</p>
+                        <div class="card-action">Continue Module 4 &rarr;</div>
+                    </div>
+                </div>
+
+                <div class="badges-section">
+                    <h2>Your Achievements</h2>
+                    <div class="badge-grid">
+                        <div class="badge-item" id="badge-1">
+                            <div class="badge-circle">🚀</div>
+                            <div class="badge-title">Launchpad Secured</div>
+                            <div class="badge-desc">Passed Mod 1 Checkpoint</div>
+                        </div>
+                        <div class="badge-item" id="badge-2">
+                            <div class="badge-circle">🧠</div>
+                            <div class="badge-title">Cognitive Shift</div>
+                            <div class="badge-desc">Passed Mod 2 Checkpoint</div>
+                        </div>
+                        <div class="badge-item" id="badge-3">
+                            <div class="badge-circle">💬</div>
+                            <div class="badge-title">Prompt Engineer</div>
+                            <div class="badge-desc">Passed Mod 3 Checkpoint</div>
+                        </div>
+                        <div class="badge-item" id="badge-4">
+                            <div class="badge-circle">🏆</div>
+                            <div class="badge-title">Pilot's License</div>
+                            <div class="badge-desc">Passed Final Readiness Check</div>
+                        </div>
+                    </div>
+                </div>
+            `,
+
+            // --- MODULE 1 CONTENT ---
+            'mod1_1': `
+                <h1 class="content-title">1.1 The Timeline of Intelligence</h1>
+                <div class="content-subtitle">AI didn't appear overnight with ChatGPT. It is the result of a 70-year evolution.</div>
+                
+                <div class="text-block">
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li><b>1950: The Turing Test.</b> Alan Turing asks, "Can machines think?" and creates a benchmark: if a human can't tell they are talking to a machine, the machine has "intelligence."</li>
+                        <li><b>The "AI Winters" (1970s–1980s).</b> Periods where the hype outpaced the technology. Funding dried up because computers weren't powerful enough to process the math required for "thinking."</li>
+                        <li><b>2012: The Deep Learning Explosion.</b> Researchers used GPUs (graphics cards) to train "Neural Networks" on massive datasets (ImageNet). Computers suddenly became better than humans at identifying objects in photos.</li>
+                        <li><b>2017: The Transformer Moment.</b> Google researchers published a paper titled "Attention is All You Need." They invented the Transformer architecture (the 'T' in GPT). This allowed AI to process entire sentences at once rather than word-by-word, leading to the "Generative AI" boom we see today.</li>
+                    </ul>
+                </div>
+                <button class="btn" onclick="markComplete(this)">Mark as Complete</button>
+            `,
+            'mod1_2': `
+                <h1 class="content-title">1.2 How AI Actually "Thinks"</h1>
+                <div class="content-subtitle">To be a power user, you must understand that AI isn't "thinking"; it is calculating.</div>
+                
+                <div class="text-block">
+                    <b>Machine Learning (ML):</b> Traditional programming uses "If/Then" rules (e.g., If the email contains "Lottery," Then move to Spam). ML is different: we give the computer 10 million spam emails and let it find its own patterns.<br><br>
+                    <b>Neural Networks:</b> Software layers inspired by the human brain. Each layer identifies a feature (e.g., Layer 1 identifies lines, Layer 2 identifies shapes, Layer 3 identifies a human face).
+                </div>
+                
+                <div class="highlight-box">
+                    <b>Generative vs. Predictive AI:</b><br>
+                    <ul>
+                        <li><b>Predictive:</b> Uses data to classify or forecast (e.g., "Will this stock go up?").</li>
+                        <li><b>Generative:</b> Uses data to create something entirely new (e.g., "Write a stock market report in the style of a pirate").</li>
+                    </ul>
+                </div>
+                <button class="btn" onclick="markComplete(this)">Mark as Complete</button>
+            `,
+            'mod1_3': `
+                <h1 class="content-title">1.3 The Engine of the LLM</h1>
+                <div class="content-subtitle">When you use ChatGPT or Claude, you are interacting with a statistical prediction machine.</div>
+                
+                <div class="text-block">
+                    <b>Definition: Tokens.</b> AI doesn't see "words." It breaks text into Tokens (chunks of roughly 4 characters). The word "Extraordinary" might be seen as 3 separate tokens by the model.<br><br>
+                    <b>Next Token Prediction.</b> The AI’s only job is to guess the most likely next token.<br>
+                    <i>Example: If you type "The cat sat on the...", the AI calculates the probability: Mat (92%), Floor (5%), Pizza (0.01%).</i>
+                </div>
+                
+                <div class="highlight-box">
+                    <b>Context Window:</b><br>
+                    This is the AI's "Short-term memory." It refers to how much information the AI can "remember" and process within a single conversation before it starts forgetting the beginning.
+                </div>
+                <button class="btn" onclick="markComplete(this)">Mark as Complete</button>
+            `,
+            'mod1_4': `
+                <h1 class="content-title">1.4 The Technical Setup</h1>
+                <div class="content-subtitle">Before we move to Module 2, you must stabilize your AI Cockpit.</div>
+                
+                <div class="text-block">
+                    <b>The "Big Four" Command Center:</b>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li><b>ChatGPT (OpenAI):</b> The best all-rounder for logic and reasoning.</li>
+                        <li><b>Claude (Anthropic):</b> The "Intellectual" with a huge context window and natural writing style.</li>
+                        <li><b>Perplexity:</b> The "Answer Engine" that provides real-time web citations.</li>
+                        <li><b>Gemini (Google):</b> The "Integrator" for your Docs, Sheets, and Drive.</li>
+                    </ul>
+                </div>
+                
+                <div class="action-box">
+                    <h3>The Identity Protocol</h3>
+                    <p style="margin-bottom: 12px;"><b>Browser Profile:</b> Create a separate Chrome/Brave profile labeled "AI Work" to keep your tools organized.</p>
+                    <p><b>Security:</b> Enable Two-Factor Authentication (2FA) on all AI accounts. Your chat history will soon contain your best ideas; protect them.</p>
+                </div>
+                <button class="btn" onclick="markComplete(this)">Mark as Complete</button>
+            `,
+            'mod1_quiz': `
+                <h1 class="content-title">Module 1 Checkpoint</h1>
+                <div class="content-subtitle">The Pilot's Checkpoint (10 Questions)</div>
+                
+                <div class="action-box">
+                    <p style="margin-bottom: 12px; font-weight: 600;">1. Who is credited with creating the 'test' to determine if a machine can exhibit intelligent behavior in 1950?</p>
+                    <label class="quiz-option"><input type="radio" name="m1q1" value="a"> A) Steve Jobs</label>
+                    <label class="quiz-option"><input type="radio" name="m1q1" value="b"> B) Alan Turing</label>
+                    <label class="quiz-option"><input type="radio" name="m1q1" value="c"> C) Sam Altman</label>
+
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">2. What does the 'T' in GPT stand for?</p>
+                    <label class="quiz-option"><input type="radio" name="m1q2" value="a"> A) Training</label>
+                    <label class="quiz-option"><input type="radio" name="m1q2" value="b"> B) Technical</label>
+                    <label class="quiz-option"><input type="radio" name="m1q2" value="c"> C) Transformer</label>
+
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">3. In AI mechanics, what is a 'Token'?</p>
+                    <label class="quiz-option"><input type="radio" name="m1q3" value="a"> A) A digital coin used for payment.</label>
+                    <label class="quiz-option"><input type="radio" name="m1q3" value="b"> B) A chunk of text (approx. 4 characters) that the AI processes.</label>
+                    <label class="quiz-option"><input type="radio" name="m1q3" value="c"> C) A secret password for the API.</label>
+
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">4. What is the main difference between 'Predictive' and 'Generative' AI?</p>
+                    <label class="quiz-option"><input type="radio" name="m1q4" value="a"> A) Predictive AI is faster; Generative AI is slower.</label>
+                    <label class="quiz-option"><input type="radio" name="m1q4" value="b"> B) Predictive classifies existing data; Generative creates new content.</label>
+                    <label class="quiz-option"><input type="radio" name="m1q4" value="c"> C) There is no difference.</label>
+
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">5. Why did AI 'Winters' occur in the past?</p>
+                    <label class="quiz-option"><input type="radio" name="m1q5" value="a"> A) Because the weather was too cold for the hardware.</label>
+                    <label class="quiz-option"><input type="radio" name="m1q5" value="b"> B) Because hype exceeded the actual computing power available at the time.</label>
+                    <label class="quiz-option"><input type="radio" name="m1q5" value="c"> C) Because humans decided AI was too dangerous.</label>
+
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">6. 'Next Token Prediction' means the AI is:</p>
+                    <label class="quiz-option"><input type="radio" name="m1q6" value="a"> A) Searching a database for the right answer.</label>
+                    <label class="quiz-option"><input type="radio" name="m1q6" value="b"> B) Calculating the statistical probability of the next piece of text.</label>
+                    <label class="quiz-option"><input type="radio" name="m1q6" value="c"> C) Reading your mind through the keyboard.</label>
+
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">7. Which tool would you use if you needed a factual answer with live links to web sources?</p>
+                    <label class="quiz-option"><input type="radio" name="m1q7" value="a"> A) ChatGPT</label>
+                    <label class="quiz-option"><input type="radio" name="m1q7" value="b"> B) Claude</label>
+                    <label class="quiz-option"><input type="radio" name="m1q7" value="c"> C) Perplexity</label>
+
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">8. What is the 'Context Window' of an LLM?</p>
+                    <label class="quiz-option"><input type="radio" name="m1q8" value="a"> A) The size of the screen you are using.</label>
+                    <label class="quiz-option"><input type="radio" name="m1q8" value="b"> B) The amount of information the AI can "remember" in a single session.</label>
+                    <label class="quiz-option"><input type="radio" name="m1q8" value="c"> C) The time it takes for an AI to respond.</label>
+
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">9. True or False: Traditional programming relies on 'Neural Networks' rather than 'If/Then' logic.</p>
+                    <label class="quiz-option"><input type="radio" name="m1q9" value="a"> A) True</label>
+                    <label class="quiz-option"><input type="radio" name="m1q9" value="b"> B) False</label>
+
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">10. Why is a separate Browser Profile recommended for this course?</p>
+                    <label class="quiz-option"><input type="radio" name="m1q10" value="a"> A) To prevent extension conflicts and keep your AI workspace organized.</label>
+                    <label class="quiz-option"><input type="radio" name="m1q10" value="b"> B) To hide your history from Google.</label>
+                    <label class="quiz-option"><input type="radio" name="m1q10" value="c"> C) To make the AI think you are a different person.</label>
+                </div>
+
+                <button class="btn" onclick="submitMod1Quiz()" style="width: 100%; font-size: 16px; padding: 16px;">Submit Launchpad Checkpoint</button>
+                <div id="quiz-feedback-1" class="feedback"></div>
+            `,
+
+            // --- MODULE 2 CONTENT ---
+            'mod2_1': `
+                <h1 class="content-title">2.1 LLMs are not Google</h1>
+                <div class="content-subtitle">Stop treating AI as a search engine. Start treating it as a reasoning partner.</div>
+                
+                <div class="text-block">
+                    <b>Google (Database Retrieval):</b> Uses keywords to find a pre-existing "needle in a haystack." It is a librarian.<br><br>
+                    <b>LLMs (Next Token Prediction):</b> LLMs don't "know" facts; they calculate probabilities. Based on the patterns of billions of sentences, they predict the most likely "next word" (token). It is a chef creating a new dish from scratch every time.<br><br>
+                    <i>Definition: Tokens.</i> The currency of AI. A token is roughly 4 characters or 0.75 words. AI processes language in these chunks, not full words.
+                </div>
+
+                <div class="action-box">
+                    <h3>Reflection</h3>
+                    <div class="input-group">
+                        <label>Describe a specific instance where Google gave you generic results that didn't solve your problem. How would a reasoning engine (AI) that can synthesize information have provided a better outcome?</label>
+                        <textarea id="m2-reflection" placeholder="Type your reflection here..."></textarea>
+                    </div>
+                    <button class="btn" onclick="submitTextActivity(this, 'm2-reflection')">Save Reflection</button>
+                </div>
+            `,
+            'mod2_2': `
+                <h1 class="content-title">2.2 The Ethics of Augmentation</h1>
+                <div class="content-subtitle">The HITL (Human-in-the-Loop) Framework</div>
+                
+                <div class="text-block">
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li><b>Human:</b> Provides the intent, strategy, and domain expertise.</li>
+                        <li><b>AI:</b> Handles the execution, volume, and first-draft generation.</li>
+                        <li><b>Human:</b> Performs the "Final Mile" check for tone, accuracy, and brand alignment.</li>
+                    </ul>
+                </div>
+
+                <div class="highlight-box">
+                    <b>Transparency Principle:</b><br>
+                    Never pass off 100% AI-generated work as your own. Use AI to augment your capability, not replace your accountability.
+                </div>
+                <button class="btn" onclick="markComplete(this)" style="width: 100%;">Mark as Complete</button>
+            `,
+            'mod2_3': `
+                <h1 class="content-title">2.3 Perplexity vs. ChatGPT (The Search Duel)</h1>
+                <div class="content-subtitle">Tool Distinction for different needs.</div>
+                
+                <div class="text-block">
+                    <b>ChatGPT</b> is built for Reasoning (thinking through problems).<br>
+                    <b>Perplexity</b> is built for Knowledge (finding cited information).
+                </div>
+
+                <div class="action-box">
+                    <h3>The Challenge</h3>
+                    <p style="margin-bottom: 16px;">Search both tools for: <i>"The latest 2026 trends in AI-driven performance marketing for the Indian EdTech sector."</i></p>
+                    <p style="margin-bottom: 16px;">Compare the citations. Perplexity will provide source links; ChatGPT will provide a structured summary based on its training data. Which one do you trust more for a client pitch?</p>
+                    <button class="btn" onclick="markComplete(this)">I have completed the duel</button>
+                </div>
+            `,
+            'mod2_quiz': `
+                <h1 class="content-title">Module 2 Checkpoint</h1>
+                <div class="content-subtitle">Test your Cognitive Shift.</div>
+                
+                <div class="action-box">
+                    <h3>Question 1</h3>
+                    <p style="margin-bottom: 16px;">When an LLM provides a confident but factually incorrect answer, it is called:</p>
+                    <label class="quiz-option"><input type="radio" name="m2q1" value="a"> A) A Glitch</label>
+                    <label class="quiz-option"><input type="radio" name="m2q1" value="b"> B) A Hallucination</label>
+                    <label class="quiz-option"><input type="radio" name="m2q1" value="c"> C) A Token Error</label>
+                </div>
+
+                <div class="action-box">
+                    <h3>Question 2</h3>
+                    <p style="margin-bottom: 16px;">True/False: LLMs like ChatGPT have a live, 1:1 database of the entire internet that they "search" every time you ask a question.</p>
+                    <label class="quiz-option"><input type="radio" name="m2q2" value="true"> True</label>
+                    <label class="quiz-option"><input type="radio" name="m2q2" value="false"> False</label>
+                </div>
+
+                <button class="btn" onclick="submitMod2Quiz()" style="width: 100%;">Submit Checkpoint</button>
+                <div id="quiz-feedback-2" class="feedback"></div>
+            `,
+
+            // --- MODULE 3 CONTENT ---
+            'mod3_1': `
+                <h1 class="content-title">3.1 The RICCE Method</h1>
+                <div class="content-subtitle">Master the "Grammar" of commanding AI.</div>
+                
+                <div class="text-block">
+                    This is the most effective way to communicate with any AI model.
+                </div>
+
+                <div class="action-box">
+                    <ul style="list-style: none; line-height: 2;">
+                        <li><b>R - Role:</b> Who is the AI pretending to be? <i>(e.g., "Faculty Head in AI" or "Senior Copywriter")</i></li>
+                        <li><b>I - Input:</b> What data are you giving it? <i>(e.g., "This raw transcript")</i></li>
+                        <li><b>C - Context:</b> Why are we doing this? <i>(e.g., "A LinkedIn post for Gen Z founders")</i></li>
+                        <li><b>C - Constraints:</b> What are the boundaries? <i>(e.g., "Under 200 words, no emojis")</i></li>
+                        <li><b>E - Expectation:</b> What is the final format? <i>(e.g., "A Markdown table")</i></li>
+                    </ul>
+                </div>
+                <button class="btn" onclick="markComplete(this)" style="width: 100%;">Mark as Complete</button>
+            `,
+            'mod3_2': `
+                <h1 class="content-title">3.2 Chain of Thought (CoT)</h1>
+                <div class="content-subtitle">Forcing linear logic to increase accuracy.</div>
+                
+                <div class="text-block">
+                    <b>The Concept:</b> If you ask an AI to solve a complex problem instantly, it may take a "probabilistic shortcut" to the wrong answer. By asking it to <i>"Think step-by-step,"</i> you force it to process logic linearly, drastically increasing accuracy.
+                </div>
+
+                <div class="action-box">
+                    <h3>Activity</h3>
+                    <p style="margin-bottom: 16px;">Ask an AI: "I have 5 shirts. It takes 5 hours to dry them in the sun. How long does it take to dry 50 shirts? Think step-by-step."</p>
+                    <div class="input-group">
+                        <label>Observe how it avoids the trap of saying 50 hours. Paste the AI's final answer below:</label>
+                        <input type="text" id="cot-answer" placeholder="Final answer...">
+                    </div>
+                    <button class="btn" onclick="submitTextActivity(this, 'cot-answer')">Save Observation</button>
+                </div>
+            `,
+            'mod3_3': `
+                <h1 class="content-title">3.3 Iterative Design</h1>
+                <div class="content-subtitle">The "3-Step Refine" Assignment</div>
+                
+                <div class="action-box">
+                    <h3>Assignment Steps</h3>
+                    <ul style="margin-left: 20px; line-height: 1.8; margin-bottom: 24px;">
+                        <li><b>Step 1:</b> Give a "Lazy Prompt" (e.g., "Write an email to my boss about a raise").</li>
+                        <li><b>Step 2:</b> Refine it using the RICCE method.</li>
+                        <li><b>Step 3:</b> Give feedback to the output (e.g., "Make it 20% more professional and mention my 15% increase in training scores").</li>
+                    </ul>
+                    <div class="input-group">
+                        <label>Paste your final, refined output here to prove you iterated:</label>
+                        <textarea id="iterative-output" placeholder="Final AI Output..."></textarea>
+                    </div>
+                    <button class="btn" onclick="submitTextActivity(this, 'iterative-output')">Submit Text</button>
+                </div>
+            `,
+            'mod3_quiz': `
+                <h1 class="content-title">Module 3 Checkpoint</h1>
+                <div class="content-subtitle">Test your Prompting skills.</div>
+                
+                <div class="action-box">
+                    <h3>Question 1</h3>
+                    <p style="margin-bottom: 16px;">In the RICCE framework, what does 'Constraints' refer to?</p>
+                    <label class="quiz-option"><input type="radio" name="m3q1" value="a"> A) The word count or tone limitations.</label>
+                    <label class="quiz-option"><input type="radio" name="m3q1" value="b"> B) The technical difficulty of the prompt.</label>
+                    <label class="quiz-option"><input type="radio" name="m3q1" value="c"> C) The API cost of the message.</label>
+                </div>
+
+                <div class="action-box">
+                    <h3>Question 2</h3>
+                    <p style="margin-bottom: 16px;">Why should you use 'Chain of Thought' (CoT)?</p>
+                    <label class="quiz-option"><input type="radio" name="m3q2" value="a"> A) To make the AI respond faster.</label>
+                    <label class="quiz-option"><input type="radio" name="m3q2" value="b"> B) To ensure the AI follows a logical sequence for complex tasks.</label>
+                    <label class="quiz-option"><input type="radio" name="m3q2" value="c"> C) To save tokens.</label>
+                </div>
+
+                <button class="btn" onclick="submitMod3Quiz()" style="width: 100%;">Submit Checkpoint</button>
+                <div id="quiz-feedback-3" class="feedback"></div>
+            `,
+
+            // --- MODULE 4 CONTENT ---
+            'mod4_1': `
+                <h1 class="content-title">4.1 The "Small Win" Bot</h1>
+                <div class="content-subtitle">Build your first "Agent".</div>
+                
+                <div class="text-block">
+                    <b>Task:</b> Use the "Custom Instructions" feature in ChatGPT or the "System Prompt" in Claude.<br><br>
+                    <b>Goal:</b> Create a "Ghostwriter" that knows your specific writing style, or a "Project Manager" that knows your specific team's Slack norms.
+                </div>
+
+                <div class="action-box">
+                    <h3>Submission</h3>
+                    <div class="input-group">
+                        <label>Paste your "System Instruction" text into the LMS below:</label>
+                        <textarea id="system-prompt" placeholder="You are an expert... You must always..."></textarea>
+                    </div>
+                    <button class="btn" onclick="submitTextActivity(this, 'system-prompt')">Submit Bot</button>
+                </div>
+            `,
+            'mod4_2': `
+                <h1 class="content-title">4.2 The ROI Calculator</h1>
+                <div class="content-subtitle">Measure your impact with the AI Output Multiplier.</div>
+                
+                <div class="action-box">
+                    <h3>Activity</h3>
+                    <p style="margin-bottom: 16px;">Use the AI Output Multiplier tool to baseline your work.</p>
+                    <div class="input-group">
+                        <label>1. Log how many hours you currently spend weekly on "Content Generation" and "Data Synthesis":</label>
+                        <input type="text" id="roi-hours" placeholder="e.g., 12 hours">
+                    </div>
+                    <div class="input-group">
+                        <label>2. Set a target goal (aim to reduce these by 50% using tools learned in Courses 1 & 2):</label>
+                        <input type="text" id="roi-target" placeholder="e.g., 6 hours saved">
+                    </div>
+                    <button class="btn" onclick="submitTextActivity(this, 'roi-target')">Save ROI Target</button>
+                </div>
+            `,
+            'mod4_3': `
+                <h1 class="content-title">4.3 Final Readiness Check</h1>
+                <div class="content-subtitle">The "Pilot's License" Exam. 10 Questions to prove you are ready.</div>
+                
+                <div class="action-box">
+                    <p style="margin-bottom: 12px; font-weight: 600;">1. Which tool is best for finding verified citations for a research paper?</p>
+                    <label class="quiz-option"><input type="radio" name="f1" value="chatgpt"> ChatGPT</label>
+                    <label class="quiz-option"><input type="radio" name="f1" value="perplexity"> Perplexity</label>
+                    
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">2. What does 'Probabilistic' mean in the context of AI?</p>
+                    <label class="quiz-option"><input type="radio" name="f2" value="a"> The AI connects to a live database.</label>
+                    <label class="quiz-option"><input type="radio" name="f2" value="b"> The AI predicts the most likely next word based on patterns.</label>
+                    
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">3. What is the 'Human-in-the-Loop' (HITL) protocol?</p>
+                    <label class="quiz-option"><input type="radio" name="f3" value="a"> A human must review and verify AI output before final use.</label>
+                    <label class="quiz-option"><input type="radio" name="f3" value="b"> The AI writing code for human developers.</label>
+                    
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">4. If an AI 'hallucinates,' what has happened?</p>
+                    <label class="quiz-option"><input type="radio" name="f4" value="a"> It crashed due to a token overload.</label>
+                    <label class="quiz-option"><input type="radio" name="f4" value="b"> It predicted a plausible-sounding but false sequence of tokens.</label>
+                    
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">5. Which part of RICCE ensures the AI doesn't use emojis?</p>
+                    <label class="quiz-option"><input type="radio" name="f5" value="role"> Role</label>
+                    <label class="quiz-option"><input type="radio" name="f5" value="constraints"> Constraints</label>
+                    
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">6. Why do we use separate Browser Profiles for AI work?</p>
+                    <label class="quiz-option"><input type="radio" name="f6" value="a"> To organize tools, prevent extension conflicts, and ensure data privacy.</label>
+                    <label class="quiz-option"><input type="radio" name="f6" value="b"> To get faster generation speeds.</label>
+                    
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">7. What is a 'System Instruction'?</p>
+                    <label class="quiz-option"><input type="radio" name="f7" value="a"> A persistent set of rules that tells the AI how to behave in every chat.</label>
+                    <label class="quiz-option"><input type="radio" name="f7" value="b"> The password used to log into OpenAI.</label>
+                    
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">8. True/False: Sharing your full API key in a public Slack channel is safe.</p>
+                    <label class="quiz-option"><input type="radio" name="f8" value="true"> True</label>
+                    <label class="quiz-option"><input type="radio" name="f8" value="false"> False</label>
+                    
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">9. What does 'Task Decomposition' mean?</p>
+                    <label class="quiz-option"><input type="radio" name="f9" value="a"> Breaking a large project into small, AI-executable steps.</label>
+                    <label class="quiz-option"><input type="radio" name="f9" value="b"> Letting the AI figure out the process on its own.</label>
+                    
+                    <p style="margin-bottom: 12px; margin-top: 24px; font-weight: 600;">10. What is the primary goal of the 'AI Output Multiplier' tool?</p>
+                    <label class="quiz-option"><input type="radio" name="f10" value="a"> To calculate and track the time/money saved by using AI.</label>
+                    <label class="quiz-option"><input type="radio" name="f10" value="b"> To generate images for marketing campaigns.</label>
+                </div>
+
+                <button class="btn" onclick="submitFinalExam()" style="width: 100%; font-size: 16px; padding: 16px;">Submit Pilot's License Exam</button>
+                <div id="quiz-feedback-final" class="feedback"></div>
+            `
+        };
+
+        window.onload = () => { loadLesson('mod_dashboard', null); updateProgress(); }
+
+        function loadLesson(lessonId, element) {
+            // Re-trigger the slide-up animation by temporarily removing and re-adding the content wrapper
+            const container = document.getElementById('content-display');
+            container.style.animation = 'none';
+            container.offsetHeight; /* trigger reflow */
+            container.style.animation = null; 
+            
+            document.querySelectorAll('.lesson-item').forEach(el => el.classList.remove('active'));
+            if(element) element.classList.add('active');
+            
+            container.innerHTML = lessonContent[lessonId];
+            window.scrollTo({ top: 0, behavior: 'smooth' }); 
+
+            // Check badge statuses when dashboard loads
+            if (lessonId === 'mod_dashboard') {
+                if(document.getElementById('mod1-quiz-nav').classList.contains('completed')) {
+                    document.getElementById('badge-1').classList.add('unlocked');
+                }
+                if(document.getElementById('mod2-quiz-nav').classList.contains('completed')) {
+                    document.getElementById('badge-2').classList.add('unlocked');
+                }
+                if(document.getElementById('mod3-quiz-nav').classList.contains('completed')) {
+                    document.getElementById('badge-3').classList.add('unlocked');
+                }
+                if(document.getElementById('mod4-quiz-nav').classList.contains('completed')) {
+                    document.getElementById('badge-4').classList.add('unlocked');
+                }
+            }
+        }
+
+        function markComplete(btnElement) {
+            const activeItem = document.querySelector('.lesson-item.active');
+            if (activeItem) activeItem.classList.add('completed');
+            btnElement.innerText = "Completed ✓";
+            btnElement.style.backgroundColor = "var(--success-green)";
+            updateProgress();
+        }
+
+        function submitTextActivity(btnElement, inputId) {
+            const inputVal = document.getElementById(inputId).value;
+            if (inputVal.trim().length > 5) {
+                markComplete(btnElement);
+            } else {
+                alert("Please fill out the text field before saving.");
+            }
+        }
+
+        function submitMod1Quiz() {
+            const feedback = document.getElementById('quiz-feedback-1');
+            let score = 0;
+            let answered = 0;
+
+            const answers = {
+                q1: 'b', q2: 'c', q3: 'b', q4: 'b', q5: 'b',
+                q6: 'b', q7: 'c', q8: 'b', q9: 'b', q10: 'a'
+            };
+
+            for (let i = 1; i <= 10; i++) {
+                const selected = document.querySelector('input[name="m1q' + i + '"]:checked');
+                if (selected) {
+                    answered++;
+                    if (selected.value === answers['q' + i]) score++;
+                }
+            }
+
+            if (answered < 10) {
+                feedback.className = 'feedback error';
+                feedback.innerText = "Please answer all 10 questions before submitting.";
+                return;
+            }
+
+            if (score >= 9) {
+                feedback.className = 'feedback success';
+                feedback.innerText = "Congratulations! You passed with a score of " + score + "/10. Badge Unlocked.";
+                document.querySelector('.lesson-item.active').classList.add('completed');
+                updateProgress();
+            } else {
+                feedback.className = 'feedback error';
+                feedback.innerText = "You scored " + score + "/10. You need a 9/10 to pass. Review the module and try again.";
+            }
+        }
+
+        function submitMod2Quiz() {
+            const q1 = document.querySelector('input[name="m2q1"]:checked');
+            const q2 = document.querySelector('input[name="m2q2"]:checked');
+            const feedback = document.getElementById('quiz-feedback-2');
+
+            if (!q1 || !q2) {
+                feedback.className = 'feedback error';
+                feedback.innerText = "Please answer all questions.";
+                return;
+            }
+
+            let score = 0;
+            if (q1.value === 'b') score++;
+            if (q2.value === 'false') score++;
+
+            if (score === 2) {
+                feedback.className = 'feedback success';
+                feedback.innerText = "Perfect Score! Badge Unlocked.";
+                document.querySelector('.lesson-item.active').classList.add('completed');
+                updateProgress();
+            } else {
+                feedback.className = 'feedback error';
+                feedback.innerText = "You scored " + score + " out of 2. Please review the material.";
+            }
+        }
+
+        function submitMod3Quiz() {
+            const q1 = document.querySelector('input[name="m3q1"]:checked');
+            const q2 = document.querySelector('input[name="m3q2"]:checked');
+            const feedback = document.getElementById('quiz-feedback-3');
+
+            if (!q1 || !q2) return feedback.className = 'feedback error', feedback.innerText = "Please answer all questions.";
+
+            let score = 0;
+            if (q1.value === 'a') score++;
+            if (q2.value === 'b') score++;
+
+            if (score === 2) {
+                feedback.className = 'feedback success';
+                feedback.innerText = "Perfect Score! Badge Unlocked.";
+                document.querySelector('.lesson-item.active').classList.add('completed');
+                updateProgress();
+            } else {
+                feedback.className = 'feedback error';
+                feedback.innerText = "You scored " + score + " out of 2. Try again.";
+            }
+        }
+
+        function submitFinalExam() {
+            const feedback = document.getElementById('quiz-feedback-final');
+            let score = 0;
+            let answered = 0;
+
+            const answers = {
+                f1: 'perplexity', f2: 'b', f3: 'a', f4: 'b', f5: 'constraints',
+                f6: 'a', f7: 'a', f8: 'false', f9: 'a', f10: 'a'
+            };
+
+            for (let i = 1; i <= 10; i++) {
+                const selected = document.querySelector('input[name="f' + i + '"]:checked');
+                if (selected) {
+                    answered++;
+                    if (selected.value === answers['f' + i]) score++;
+                }
+            }
+
+            if (answered < 10) {
+                feedback.className = 'feedback error';
+                feedback.innerText = "Please answer all 10 questions before submitting.";
+                return;
+            }
+
+            if (score >= 9) {
+                feedback.className = 'feedback success';
+                feedback.innerText = "Congratulations! You passed with a score of " + score + "/10. You have earned your Pilot's License!";
+                document.querySelector('.lesson-item.active').classList.add('completed');
+                updateProgress();
+            } else {
+                feedback.className = 'feedback error';
+                feedback.innerText = "You scored " + score + "/10. You need a 9/10 to pass. Review the modules and try again.";
+            }
+        }
+
+        function updateProgress() {
+            const total = document.querySelectorAll('.lesson-item').length;
+            const completed = document.querySelectorAll('.lesson-item.completed').length;
+            const percentage = Math.round((completed / total) * 100);
+            document.getElementById('progress-bar').style.width = percentage + '%';
+            document.getElementById('progress-text').innerText = percentage + '% COMPLETE';
+        }
+    </script>
+</body>
+</html>
