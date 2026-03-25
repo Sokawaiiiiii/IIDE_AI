@@ -234,14 +234,9 @@
             <div class="module-divider">Module 5: The Knowledge Vault</div>
             <ul class="lesson-list">
                 <li class="lesson-item" onclick="loadLesson('mod5_1_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">5.1 Read: Masterclass</div></li>
-                <li class="lesson-item" onclick="loadLesson('mod5_2_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">5.2 Read: YouTube Directory</div></li>
             </ul>
 
-            <div class="module-divider">Module 6: Case Studies</div>
-            <ul class="lesson-list">
-                <li class="lesson-item" onclick="loadLesson('mod6_1_vid', this)"><div class="lesson-icon"></div><div class="lesson-title">6.1 Watch: Industry Case Studies</div></li>
-                <li class="lesson-item" onclick="loadLesson('mod6_1_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">6.1 Read: Industry Case Studies</div></li>
-            </ul>
+           
         </aside>
 
         <main class="content-area">
@@ -286,11 +281,7 @@
                         <p>Access masterclasses and a curated directory of top-tier YouTube resources for continued learning.</p>
                         <div class="card-action">Explore Vault &rarr;</div>
                     </div>
-                    <div class="module-card" onclick="document.querySelectorAll('.lesson-item')[24].click();">
-                        <h3>Module 6: Case Studies</h3>
-                        <p>Analyze real-world industry applications and see how top companies are integrating AI workflows.</p>
-                        <div class="card-action">View Studies &rarr;</div>
-                    </div>
+                    
                 </div>
 
                 <div class="badges-section">
@@ -755,41 +746,14 @@
                 <h1 class="content-title">Read: Masterclass</h1>
                 <div class="content-subtitle">Deep dive into advanced topics and real-world execution.</div>
 
-                <div class="text-block">
-                    In this comprehensive masterclass, we explore the broader context of AI workflows and how to permanently transition your daily tasks into augmented pipelines.
-                </div>
-                <button class="btn" onclick="markComplete(this)">Mark as Read</button>
-            `,
-            'mod5_2_txt': `
-                <h1 class="content-title">Read: YouTube Directory</h1>
-                <div class="content-subtitle">A curated collection of resources to continue your journey.</div>
-
-                <div class="text-block">
-                    The AI landscape shifts weekly. Bookmark the channels and resources highlighted in this directory to ensure your knowledge stays up to date long after completing Month 0.
-                </div>
-                <button class="btn" onclick="markComplete(this)">Mark as Read</button>
-            `,
-
-            // --- MODULE 6 CONTENT ---
-            'mod6_1_vid': `
-                <h1 class="content-title">Watch: Industry Case Studies</h1>
-                <div class="content-subtitle">Seeing the theory in action across multiple sectors.</div>
-                
-                <div class="video-wrapper">
-                    <iframe src="https://www.youtube.com/embed/mSd9nmPM7Vg" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-                <button class="btn" onclick="markComplete(this)">Mark as Watched</button>
-            `,
-            'mod6_1_txt': `
-                <h1 class="content-title">Read: Industry Case Studies</h1>
-                <div class="content-subtitle">Applying AI in the real world.</div>
-
                 <div style="width: 100%; height: 70vh; min-height: 600px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 32px; box-shadow: 0 8px 24px rgba(0,0,0,0.1);">
                     <iframe src="https://docs.google.com/document/d/179hAuHKU5xxTnBXkUqwsFW811J197ZpVPDZ71fDqRvg/preview" width="100%" height="100%" style="border: none;"></iframe>
-                </div>
                 
                 <button class="btn" onclick="markComplete(this)">Mark as Read</button>
-            `
+            `,
+            
+
+            
         };
 
         // --- SCRIPTS & LOGIC ---
