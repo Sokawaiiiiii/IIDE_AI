@@ -30,12 +30,12 @@
         .top-navbar {
             display: flex; justify-content: space-between; align-items: center;
             height: 70px; background-color: #FFFFFF; border-bottom: 1px solid var(--border-color);
-            padding-top: 0; padding-bottom: 0; padding-right: 24px; padding-left: 8px; /* Pushed further left */
+            padding-top: 0; padding-bottom: 0; padding-right: 24px; padding-left: 8px;
             flex-shrink: 0; z-index: 10;
             box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
         .logo-area { display: flex; align-items: center; width: 320px; }
-        .logo-area img { max-height: 55px; width: auto; margin-left: 8px; } /* Larger logo size */
+        .logo-area img { max-height: 55px; width: auto; margin-left: 8px; }
         
         .progress-container { flex-grow: 1; margin: 0 40px; max-width: 400px; }
         .progress-text { font-size: 14px; font-weight: 700; color: var(--success-green); margin-bottom: 8px; display: block; }
@@ -90,6 +90,10 @@
         .content-title { font-size: 28px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; letter-spacing: -0.5px; }
         .content-subtitle { font-size: 16px; color: var(--text-muted); margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
         
+        /* Video Embed Styles */
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; margin-bottom: 32px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); border: 1px solid var(--border-color); background: #000; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
         .text-block { font-size: 16px; line-height: 1.6; color: var(--text-dark); margin-bottom: 24px; }
         .text-block b { color: var(--brand-blue); }
         .highlight-box { background-color: rgba(255, 193, 7, 0.1); border-left: 4px solid var(--warning-yellow); padding: 16px; margin-bottom: 24px; border-radius: 0 8px 8px 0; }
@@ -184,34 +188,59 @@
             
             <div class="module-divider" style="top: 52px;">Module 1: The Launchpad</div>
             <ul class="lesson-list">
-                <li class="lesson-item" onclick="loadLesson('mod1_1', this)"><div class="lesson-icon"></div><div class="lesson-title">1.1 Timeline of Intelligence</div></li>
-                <li class="lesson-item" onclick="loadLesson('mod1_2', this)"><div class="lesson-icon"></div><div class="lesson-title">1.2 How AI "Thinks"</div></li>
-                <li class="lesson-item" onclick="loadLesson('mod1_3', this)"><div class="lesson-icon"></div><div class="lesson-title">1.3 Engine of the LLM</div></li>
-                <li class="lesson-item" onclick="loadLesson('mod1_4', this)"><div class="lesson-icon"></div><div class="lesson-title">1.4 Technical Setup</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod1_1_vid', this)"><div class="lesson-icon"></div><div class="lesson-title">1.1 Watch: Timeline of Intelligence</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod1_1_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">1.1 Read: Timeline of Intelligence</div></li>
+                
+                <li class="lesson-item" onclick="loadLesson('mod1_2_vid', this)"><div class="lesson-icon"></div><div class="lesson-title">1.2 Watch: How AI "Thinks"</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod1_2_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">1.2 Read: How AI "Thinks"</div></li>
+                
+                <li class="lesson-item" onclick="loadLesson('mod1_3_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">1.3 Read: Engine of the LLM</div></li>
+                
+                <li class="lesson-item" onclick="loadLesson('mod1_4_vid', this)"><div class="lesson-icon"></div><div class="lesson-title">1.4 Watch: Technical Setup</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod1_4_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">1.4 Read: Technical Setup</div></li>
                 <li class="lesson-item" id="mod1-quiz-nav" onclick="loadLesson('mod1_quiz', this)"><div class="lesson-icon"></div><div class="lesson-title">Module 1 Checkpoint</div></li>
             </ul>
 
             <div class="module-divider">Module 2: The AI Mindset</div>
             <ul class="lesson-list">
-                <li class="lesson-item" onclick="loadLesson('mod2_1', this)"><div class="lesson-icon"></div><div class="lesson-title">2.1 LLMs are not Google</div></li>
-                <li class="lesson-item" onclick="loadLesson('mod2_2', this)"><div class="lesson-icon"></div><div class="lesson-title">2.2 Ethics of Augmentation</div></li>
-                <li class="lesson-item" onclick="loadLesson('mod2_3', this)"><div class="lesson-icon"></div><div class="lesson-title">2.3 Perplexity vs. ChatGPT</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod2_1_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">2.1 Read: LLMs are not Google</div></li>
+                
+                <li class="lesson-item" onclick="loadLesson('mod2_2_vid', this)"><div class="lesson-icon"></div><div class="lesson-title">2.2 Watch: Ethics of Augmentation</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod2_2_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">2.2 Read: Ethics of Augmentation</div></li>
+                
+                <li class="lesson-item" onclick="loadLesson('mod2_3_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">2.3 Read: Perplexity vs. ChatGPT</div></li>
                 <li class="lesson-item" id="mod2-quiz-nav" onclick="loadLesson('mod2_quiz', this)"><div class="lesson-icon"></div><div class="lesson-title">Module 2 Checkpoint</div></li>
             </ul>
 
             <div class="module-divider">Module 3: Prompting Sandbox</div>
             <ul class="lesson-list">
-                <li class="lesson-item" onclick="loadLesson('mod3_1', this)"><div class="lesson-icon"></div><div class="lesson-title">3.1 The RICCE Method</div></li>
-                <li class="lesson-item" onclick="loadLesson('mod3_2', this)"><div class="lesson-icon"></div><div class="lesson-title">3.2 Chain of Thought (CoT)</div></li>
-                <li class="lesson-item" onclick="loadLesson('mod3_3', this)"><div class="lesson-icon"></div><div class="lesson-title">3.3 Iterative Design</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod3_1_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">3.1 Read: The RICCE Method</div></li>
+                
+                <li class="lesson-item" onclick="loadLesson('mod3_2_vid', this)"><div class="lesson-icon"></div><div class="lesson-title">3.2 Watch: Chain of Thought</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod3_2_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">3.2 Read: Chain of Thought</div></li>
+                
+                <li class="lesson-item" onclick="loadLesson('mod3_3_vid', this)"><div class="lesson-icon"></div><div class="lesson-title">3.3 Watch: Iterative Design</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod3_3_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">3.3 Read: Iterative Design</div></li>
                 <li class="lesson-item" id="mod3-quiz-nav" onclick="loadLesson('mod3_quiz', this)"><div class="lesson-icon"></div><div class="lesson-title">Module 3 Checkpoint</div></li>
             </ul>
 
             <div class="module-divider">Module 4: Pre-Flight Project</div>
             <ul class="lesson-list">
-                <li class="lesson-item" onclick="loadLesson('mod4_1', this)"><div class="lesson-icon"></div><div class="lesson-title">4.1 The "Small Win" Bot</div></li>
-                <li class="lesson-item" onclick="loadLesson('mod4_2', this)"><div class="lesson-icon"></div><div class="lesson-title">4.2 The ROI Calculator</div></li>
-                <li class="lesson-item" id="mod4-quiz-nav" onclick="loadLesson('mod4_3', this)"><div class="lesson-icon"></div><div class="lesson-title">4.3 Final Readiness Check</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod4_1_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">4.1 Read: The "Small Win" Bot</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod4_2_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">4.2 Read: The ROI Calculator</div></li>
+                <li class="lesson-item" id="mod4-quiz-nav" onclick="loadLesson('mod4_3_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">4.3 Final Readiness Check</div></li>
+            </ul>
+
+            <div class="module-divider">Module 5: The Knowledge Vault</div>
+            <ul class="lesson-list">
+                <li class="lesson-item" onclick="loadLesson('mod5_1_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">5.1 Read: Masterclass</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod5_2_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">5.2 Read: YouTube Directory</div></li>
+            </ul>
+
+            <div class="module-divider">Module 6: Case Studies</div>
+            <ul class="lesson-list">
+                <li class="lesson-item" onclick="loadLesson('mod6_1_vid', this)"><div class="lesson-icon"></div><div class="lesson-title">6.1 Watch: Industry Case Studies</div></li>
+                <li class="lesson-item" onclick="loadLesson('mod6_1_txt', this)"><div class="lesson-icon"></div><div class="lesson-title">6.1 Read: Industry Case Studies</div></li>
             </ul>
         </aside>
 
@@ -237,20 +266,30 @@
                         <p>De-mystify AI history, understand the LLM engine, and set up your technical cockpit before prompting.</p>
                         <div class="card-action">Continue Module 1 &rarr;</div>
                     </div>
-                    <div class="module-card" onclick="document.querySelectorAll('.lesson-item')[5].click();">
+                    <div class="module-card" onclick="document.querySelectorAll('.lesson-item')[8].click();">
                         <h3>Module 2: The AI Mindset</h3>
                         <p>Stop treating AI as a search engine. Learn predictive logic, task decomposition, and the Human-in-the-Loop framework.</p>
                         <div class="card-action">Continue Module 2 &rarr;</div>
                     </div>
-                    <div class="module-card" onclick="document.querySelectorAll('.lesson-item')[9].click();">
+                    <div class="module-card" onclick="document.querySelectorAll('.lesson-item')[13].click();">
                         <h3>Module 3: Prompting Sandbox</h3>
                         <p>Master the Grammar of commanding AI. Learn the RICCE Method, Chain of Thought, and iterative prompt design.</p>
                         <div class="card-action">Continue Module 3 &rarr;</div>
                     </div>
-                    <div class="module-card" onclick="document.querySelectorAll('.lesson-item')[13].click();">
+                    <div class="module-card" onclick="document.querySelectorAll('.lesson-item')[19].click();">
                         <h3>Module 4: Pre-Flight</h3>
                         <p>Build your first automated Agent, calculate your ROI benchmark, and pass the final Pilot's License Exam.</p>
                         <div class="card-action">Continue Module 4 &rarr;</div>
+                    </div>
+                    <div class="module-card" onclick="document.querySelectorAll('.lesson-item')[22].click();">
+                        <h3>Module 5: The Knowledge Vault</h3>
+                        <p>Access masterclasses and a curated directory of top-tier YouTube resources for continued learning.</p>
+                        <div class="card-action">Explore Vault &rarr;</div>
+                    </div>
+                    <div class="module-card" onclick="document.querySelectorAll('.lesson-item')[24].click();">
+                        <h3>Module 6: Case Studies</h3>
+                        <p>Analyze real-world industry applications and see how top companies are integrating AI workflows.</p>
+                        <div class="card-action">View Studies &rarr;</div>
                     </div>
                 </div>
 
@@ -282,8 +321,17 @@
             `,
 
             // --- MODULE 1 CONTENT ---
-            'mod1_1': `
-                <h1 class="content-title">1.1 The Timeline of Intelligence</h1>
+            'mod1_1_vid': `
+                <h1 class="content-title">Watch: Timeline of Intelligence</h1>
+                <div class="content-subtitle">Understand the 70-year evolution of Artificial Intelligence.</div>
+                
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/wufv-2ttkfo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <button class="btn" onclick="markComplete(this)">Mark as Watched</button>
+            `,
+            'mod1_1_txt': `
+                <h1 class="content-title">Read: The Timeline of Intelligence</h1>
                 <div class="content-subtitle">AI didn't appear overnight with ChatGPT. It is the result of a 70-year evolution.</div>
                 
                 <div class="text-block">
@@ -294,10 +342,20 @@
                         <li><b>2017: The Transformer Moment.</b> Google researchers published a paper titled "Attention is All You Need." They invented the Transformer architecture (the 'T' in GPT). This allowed AI to process entire sentences at once rather than word-by-word, leading to the "Generative AI" boom we see today.</li>
                     </ul>
                 </div>
-                <button class="btn" onclick="markComplete(this)">Mark as Complete</button>
+                <button class="btn" onclick="markComplete(this)">Mark as Read</button>
             `,
-            'mod1_2': `
-                <h1 class="content-title">1.2 How AI Actually "Thinks"</h1>
+            
+            'mod1_2_vid': `
+                <h1 class="content-title">Watch: How AI "Thinks"</h1>
+                <div class="content-subtitle">Discover the internal logic behind the model.</div>
+                
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/0kU670foqDg" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <button class="btn" onclick="markComplete(this)">Mark as Watched</button>
+            `,
+            'mod1_2_txt': `
+                <h1 class="content-title">Read: How AI Actually "Thinks"</h1>
                 <div class="content-subtitle">To be a power user, you must understand that AI isn't "thinking"; it is calculating.</div>
                 
                 <div class="text-block">
@@ -312,12 +370,13 @@
                         <li><b>Generative:</b> Uses data to create something entirely new (e.g., "Write a stock market report in the style of a pirate").</li>
                     </ul>
                 </div>
-                <button class="btn" onclick="markComplete(this)">Mark as Complete</button>
+                <button class="btn" onclick="markComplete(this)">Mark as Read</button>
             `,
-            'mod1_3': `
-                <h1 class="content-title">1.3 The Engine of the LLM</h1>
+            
+            'mod1_3_txt': `
+                <h1 class="content-title">Read: The Engine of the LLM</h1>
                 <div class="content-subtitle">When you use ChatGPT or Claude, you are interacting with a statistical prediction machine.</div>
-                
+
                 <div class="text-block">
                     <b>Definition: Tokens.</b> AI doesn't see "words." It breaks text into Tokens (chunks of roughly 4 characters). The word "Extraordinary" might be seen as 3 separate tokens by the model.<br><br>
                     <b>Next Token Prediction.</b> The AI’s only job is to guess the most likely next token.<br>
@@ -328,10 +387,20 @@
                     <b>Context Window:</b><br>
                     This is the AI's "Short-term memory." It refers to how much information the AI can "remember" and process within a single conversation before it starts forgetting the beginning.
                 </div>
-                <button class="btn" onclick="markComplete(this)">Mark as Complete</button>
+                <button class="btn" onclick="markComplete(this)">Mark as Read</button>
             `,
-            'mod1_4': `
-                <h1 class="content-title">1.4 The Technical Setup</h1>
+            
+            'mod1_4_vid': `
+                <h1 class="content-title">Watch: Technical Setup</h1>
+                <div class="content-subtitle">Preparing your AI command center.</div>
+                
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/Q6QwO2oCAMs" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <button class="btn" onclick="markComplete(this)">Mark as Watched</button>
+            `,
+            'mod1_4_txt': `
+                <h1 class="content-title">Read: The Technical Setup</h1>
                 <div class="content-subtitle">Before we move to Module 2, you must stabilize your AI Cockpit.</div>
                 
                 <div class="text-block">
@@ -349,7 +418,7 @@
                     <p style="margin-bottom: 12px;"><b>Browser Profile:</b> Create a separate Chrome/Brave profile labeled "AI Work" to keep your tools organized.</p>
                     <p><b>Security:</b> Enable Two-Factor Authentication (2FA) on all AI accounts. Your chat history will soon contain your best ideas; protect them.</p>
                 </div>
-                <button class="btn" onclick="markComplete(this)">Mark as Complete</button>
+                <button class="btn" onclick="markComplete(this)">Mark as Read</button>
             `,
             'mod1_quiz': `
                 <h1 class="content-title">Module 1 Checkpoint</h1>
@@ -411,10 +480,10 @@
             `,
 
             // --- MODULE 2 CONTENT ---
-            'mod2_1': `
-                <h1 class="content-title">2.1 LLMs are not Google</h1>
+            'mod2_1_txt': `
+                <h1 class="content-title">Read: LLMs are not Google</h1>
                 <div class="content-subtitle">Stop treating AI as a search engine. Start treating it as a reasoning partner.</div>
-                
+
                 <div class="text-block">
                     <b>Google (Database Retrieval):</b> Uses keywords to find a pre-existing "needle in a haystack." It is a librarian.<br><br>
                     <b>LLMs (Next Token Prediction):</b> LLMs don't "know" facts; they calculate probabilities. Based on the patterns of billions of sentences, they predict the most likely "next word" (token). It is a chef creating a new dish from scratch every time.<br><br>
@@ -430,8 +499,17 @@
                     <button class="btn" onclick="submitTextActivity(this, 'm2-reflection')">Save Reflection</button>
                 </div>
             `,
-            'mod2_2': `
-                <h1 class="content-title">2.2 The Ethics of Augmentation</h1>
+            'mod2_2_vid': `
+                <h1 class="content-title">Watch: Ethics of Augmentation</h1>
+                <div class="content-subtitle">Integrating AI into your workflow responsibly.</div>
+                
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/sZIV7em3JA8" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <button class="btn" onclick="markComplete(this)">Mark as Watched</button>
+            `,
+            'mod2_2_txt': `
+                <h1 class="content-title">Read: The Ethics of Augmentation</h1>
                 <div class="content-subtitle">The HITL (Human-in-the-Loop) Framework</div>
                 
                 <div class="text-block">
@@ -446,12 +524,12 @@
                     <b>Transparency Principle:</b><br>
                     Never pass off 100% AI-generated work as your own. Use AI to augment your capability, not replace your accountability.
                 </div>
-                <button class="btn" onclick="markComplete(this)" style="width: 100%;">Mark as Complete</button>
+                <button class="btn" onclick="markComplete(this)" style="width: 100%;">Mark as Read</button>
             `,
-            'mod2_3': `
-                <h1 class="content-title">2.3 Perplexity vs. ChatGPT (The Search Duel)</h1>
+            'mod2_3_txt': `
+                <h1 class="content-title">Read: Perplexity vs. ChatGPT (The Search Duel)</h1>
                 <div class="content-subtitle">Tool Distinction for different needs.</div>
-                
+
                 <div class="text-block">
                     <b>ChatGPT</b> is built for Reasoning (thinking through problems).<br>
                     <b>Perplexity</b> is built for Knowledge (finding cited information).
@@ -488,10 +566,10 @@
             `,
 
             // --- MODULE 3 CONTENT ---
-            'mod3_1': `
-                <h1 class="content-title">3.1 The RICCE Method</h1>
+            'mod3_1_txt': `
+                <h1 class="content-title">Read: The RICCE Method</h1>
                 <div class="content-subtitle">Master the "Grammar" of commanding AI.</div>
-                
+
                 <div class="text-block">
                     This is the most effective way to communicate with any AI model.
                 </div>
@@ -505,12 +583,21 @@
                         <li><b>E - Expectation:</b> What is the final format? <i>(e.g., "A Markdown table")</i></li>
                     </ul>
                 </div>
-                <button class="btn" onclick="markComplete(this)" style="width: 100%;">Mark as Complete</button>
+                <button class="btn" onclick="markComplete(this)" style="width: 100%;">Mark as Read</button>
             `,
-            'mod3_2': `
-                <h1 class="content-title">3.2 Chain of Thought (CoT)</h1>
-                <div class="content-subtitle">Forcing linear logic to increase accuracy.</div>
+            'mod3_2_vid': `
+                <h1 class="content-title">Watch: Chain of Thought (CoT)</h1>
+                <div class="content-subtitle">Understanding logical breakdown in models.</div>
                 
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/XzRsgRkMHeQ" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <button class="btn" onclick="markComplete(this)">Mark as Watched</button>
+            `,
+            'mod3_2_txt': `
+                <h1 class="content-title">Read: Chain of Thought (CoT)</h1>
+                <div class="content-subtitle">Forcing linear logic to increase accuracy.</div>
+
                 <div class="text-block">
                     <b>The Concept:</b> If you ask an AI to solve a complex problem instantly, it may take a "probabilistic shortcut" to the wrong answer. By asking it to <i>"Think step-by-step,"</i> you force it to process logic linearly, drastically increasing accuracy.
                 </div>
@@ -525,10 +612,19 @@
                     <button class="btn" onclick="submitTextActivity(this, 'cot-answer')">Save Observation</button>
                 </div>
             `,
-            'mod3_3': `
-                <h1 class="content-title">3.3 Iterative Design</h1>
-                <div class="content-subtitle">The "3-Step Refine" Assignment</div>
+            'mod3_3_vid': `
+                <h1 class="content-title">Watch: Iterative Design</h1>
+                <div class="content-subtitle">Crafting the perfect prompt through refinement.</div>
                 
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/JDtBwOXx6Kg" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <button class="btn" onclick="markComplete(this)">Mark as Watched</button>
+            `,
+            'mod3_3_txt': `
+                <h1 class="content-title">Read: Iterative Design</h1>
+                <div class="content-subtitle">The "3-Step Refine" Assignment</div>
+
                 <div class="action-box">
                     <h3>Assignment Steps</h3>
                     <ul style="margin-left: 20px; line-height: 1.8; margin-bottom: 24px;">
@@ -546,7 +642,7 @@
             'mod3_quiz': `
                 <h1 class="content-title">Module 3 Checkpoint</h1>
                 <div class="content-subtitle">Test your Prompting skills.</div>
-                
+
                 <div class="action-box">
                     <h3>Question 1</h3>
                     <p style="margin-bottom: 16px;">In the RICCE framework, what does 'Constraints' refer to?</p>
@@ -568,10 +664,10 @@
             `,
 
             // --- MODULE 4 CONTENT ---
-            'mod4_1': `
-                <h1 class="content-title">4.1 The "Small Win" Bot</h1>
+            'mod4_1_txt': `
+                <h1 class="content-title">Read: The "Small Win" Bot</h1>
                 <div class="content-subtitle">Build your first "Agent".</div>
-                
+
                 <div class="text-block">
                     <b>Task:</b> Use the "Custom Instructions" feature in ChatGPT or the "System Prompt" in Claude.<br><br>
                     <b>Goal:</b> Create a "Ghostwriter" that knows your specific writing style, or a "Project Manager" that knows your specific team's Slack norms.
@@ -586,10 +682,10 @@
                     <button class="btn" onclick="submitTextActivity(this, 'system-prompt')">Submit Bot</button>
                 </div>
             `,
-            'mod4_2': `
-                <h1 class="content-title">4.2 The ROI Calculator</h1>
+            'mod4_2_txt': `
+                <h1 class="content-title">Read: The ROI Calculator</h1>
                 <div class="content-subtitle">Measure your impact with the AI Output Multiplier.</div>
-                
+
                 <div class="action-box">
                     <h3>Activity</h3>
                     <p style="margin-bottom: 16px;">Use the AI Output Multiplier tool to baseline your work.</p>
@@ -604,8 +700,8 @@
                     <button class="btn" onclick="submitTextActivity(this, 'roi-target')">Save ROI Target</button>
                 </div>
             `,
-            'mod4_3': `
-                <h1 class="content-title">4.3 Final Readiness Check</h1>
+            'mod4_3_txt': `
+                <h1 class="content-title">Final Readiness Check</h1>
                 <div class="content-subtitle">The "Pilot's License" Exam. 10 Questions to prove you are ready.</div>
                 
                 <div class="action-box">
@@ -652,6 +748,47 @@
 
                 <button class="btn" onclick="submitFinalExam()" style="width: 100%; font-size: 16px; padding: 16px;">Submit Pilot's License Exam</button>
                 <div id="quiz-feedback-final" class="feedback"></div>
+            `,
+            
+            // --- MODULE 5 CONTENT ---
+            'mod5_1_txt': `
+                <h1 class="content-title">Read: Masterclass</h1>
+                <div class="content-subtitle">Deep dive into advanced topics and real-world execution.</div>
+
+                <div class="text-block">
+                    In this comprehensive masterclass, we explore the broader context of AI workflows and how to permanently transition your daily tasks into augmented pipelines.
+                </div>
+                <button class="btn" onclick="markComplete(this)">Mark as Read</button>
+            `,
+            'mod5_2_txt': `
+                <h1 class="content-title">Read: YouTube Directory</h1>
+                <div class="content-subtitle">A curated collection of resources to continue your journey.</div>
+
+                <div class="text-block">
+                    The AI landscape shifts weekly. Bookmark the channels and resources highlighted in this directory to ensure your knowledge stays up to date long after completing Month 0.
+                </div>
+                <button class="btn" onclick="markComplete(this)">Mark as Read</button>
+            `,
+
+            // --- MODULE 6 CONTENT ---
+            'mod6_1_vid': `
+                <h1 class="content-title">Watch: Industry Case Studies</h1>
+                <div class="content-subtitle">Seeing the theory in action across multiple sectors.</div>
+                
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/mSd9nmPM7Vg" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <button class="btn" onclick="markComplete(this)">Mark as Watched</button>
+            `,
+            'mod6_1_txt': `
+                <h1 class="content-title">Read: Industry Case Studies</h1>
+                <div class="content-subtitle">Applying AI in the real world.</div>
+
+                <div style="width: 100%; height: 70vh; min-height: 600px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 32px; box-shadow: 0 8px 24px rgba(0,0,0,0.1);">
+                    <iframe src="https://docs.google.com/document/d/179hAuHKU5xxTnBXkUqwsFW811J197ZpVPDZ71fDqRvg/preview" width="100%" height="100%" style="border: none;"></iframe>
+                </div>
+                
+                <button class="btn" onclick="markComplete(this)">Mark as Read</button>
             `
         };
 
